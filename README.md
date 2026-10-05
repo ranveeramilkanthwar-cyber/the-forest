@@ -12,3 +12,5 @@
 cd backend && npm install && npm start
 cd frontend && open index.html
 ```
+
+<!-- chore: project init and repo structure -->
