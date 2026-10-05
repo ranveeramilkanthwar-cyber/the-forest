@@ -72,3 +72,5 @@ server.listen(3001, () => console.log("THE FOREST backend running on http://loca
 <!-- feat: add Express server with CORS -->
 
 <!-- feat: add /api/forest state endpoint -->
+
+<!-- feat: add /api/species and /api/trees routes -->
