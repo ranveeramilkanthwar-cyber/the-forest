@@ -78,3 +78,5 @@ server.listen(3001, () => console.log("THE FOREST backend running on http://loca
 <!-- feat: add WebSocket real-time updates -->
 
 <!-- feat: add /api/donate tree planting endpoint -->
+
+<!-- feat: add season and weather change APIs -->
