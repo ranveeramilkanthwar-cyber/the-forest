@@ -70,3 +70,5 @@ setInterval(() => {
 server.listen(3001, () => console.log("THE FOREST backend running on http://localhost:3001"));
 
 <!-- feat: add Express server with CORS -->
+
+<!-- feat: add /api/forest state endpoint -->
