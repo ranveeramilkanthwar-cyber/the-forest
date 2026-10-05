@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Forest — Living Ecosystem</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#22c55e;--emerald:#059669;--teal:#0d9488;--gold:#f59e0b;--brown:#92400e;--dark:#0a1a0a;--darker:#050f05}
+body{background:var(--darker);color:#d1fae5;font-family:'Georgia',serif;overflow-x:hidden;min-height:100vh}
+canvas#forest-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.grain{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");z-index:1;pointer-events:none;opacity:.4}
+main{position:relative;z-index:2}
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 3rem;background:rgba(5,15,5,.7);backdrop-filter:blur(20px);border-bottom:1px solid rgba(34,197,94,.2);position:sticky;top:0;z-index:100}
+.brand{font-size:1.6rem;font-weight:bold;color:var(--green);text-shadow:0 0 20px rgba(34,197,94,.5);letter-spacing:.1em}
+.nav-stats{display:flex;gap:2rem;font-size:.85rem}
+.stat-item{text-align:center}
+.stat-val{color:var(--green);font-size:1.2rem;font-weight:bold;display:block}
+.stat-lbl{color:rgba(209,250,229,.5);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em}
+.hero{min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:4rem 2rem;position:relative}
+.hero h1{font-size:clamp(3rem,8vw,7rem);color:var(--green);text-shadow:0 0 60px rgba(34,197,94,.4),0 0 120px rgba(34,197,94,.2);line-height:1;margin-bottom:1.5rem;animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{text-shadow:0 0 60px rgba(34,197,94,.4)}50%{text-shadow:0 0 100px rgba(34,197,94,.8),0 0 200px rgba(34,197,94,.3)}}
+.hero p{font-size:1.2rem;color:rgba(209,250,229,.7);max-width:600px;line-height:1.8;margin-bottom:3rem}
+.btn-plant{background:linear-gradient(135deg,var(--green),var(--emerald));color:#fff;border:none;padding:1rem 3rem;font-size:1.1rem;border-radius:50px;cursor:pointer;transition:all .3s;box-shadow:0 0 30px rgba(34,197,94,.4)}
+.btn-plant:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 0 60px rgba(34,197,94,.7)}
+.season-row{display:flex;gap:1rem;margin-top:2rem}
+.season-btn{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green);padding:.5rem 1.5rem;border-radius:25px;cursor:pointer;transition:all .3s;font-size:.9rem}
+.season-btn:hover,.season-btn.active{background:var(--green);color:#fff}
+.section{padding:5rem 3rem;max-width:1200px;margin:0 auto}
+.section-title{font-size:2.5rem;color:var(--green);margin-bottom:2rem;text-align:center;position:relative}
+.section-title::after{content:"";display:block;width:80px;height:3px;background:var(--green);margin:.8rem auto 0;border-radius:2px}
+.species-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem}
+.species-card{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2);border-radius:16px;padding:1.5rem;text-align:center;transition:all .3s;cursor:pointer}
+.species-card:hover{transform:translateY(-8px);border-color:var(--green);background:rgba(34,197,94,.12);box-shadow:0 20px 40px rgba(34,197,94,.15)}
+.species-emoji{font-size:3rem;margin-bottom:.8rem;display:block}
+.species-name{font-size:.95rem;font-weight:bold;color:#d1fae5;margin-bottom:.3rem}
+.species-rarity{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;padding:.2rem .6rem;border-radius:10px}
+.rarity-common{background:rgba(34,197,94,.2);color:var(--green)}
+.rarity-uncommon{background:rgba(245,158,11,.2);color:var(--gold)}
+.rarity-rare{background:rgba(239,68,68,.2);color:#f87171}
+.fact-box{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:16px;padding:2rem;text-align:center;margin:3rem 0;font-size:1.1rem;font-style:italic;color:#a7f3d0;cursor:pointer;transition:all .3s}
+.fact-box:hover{background:rgba(34,197,94,.14);border-color:var(--green)}
+.trees-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5rem}
+.tree-card{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);border-radius:16px;padding:1.5rem;transition:all .3s}
+.tree-card:hover{transform:translateY(-6px);box-shadow:0 15px 35px rgba(5,150,105,.2)}
+.tree-name{font-size:1.1rem;font-weight:bold;color:var(--green);margin-bottom:1rem}
+.tree-stat{display:flex;justify-content:space-between;font-size:.85rem;color:rgba(209,250,229,.7);margin-bottom:.4rem}
+.weather-bar{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.1);border-radius:12px;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.ws-status{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+footer{text-align:center;padding:3rem;color:rgba(209,250,229,.4);font-size:.85rem;border-top:1px solid rgba(34,197,94,.1)}
+.toast{position:fixed;bottom:2rem;right:2rem;background:#059669;color:#fff;padding:1rem 1.5rem;border-radius:12px;z-index:999;animation:slideIn .3s ease;max-width:300px;font-size:.9rem}
+@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+</style>
+</head>
+<body>
+<canvas id="forest-bg"></canvas>
+<div class="grain"></div>
+<main>
+<nav>
+  <div class="brand">🌿 The Forest</div>
+  <div class="nav-stats">
+    <div class="stat-item"><span class="stat-val" id="nav-trees">47</span><span class="stat-lbl">Trees</span></div>
+    <div class="stat-item"><span class="stat-val" id="nav-co2">6.3T</span><span class="stat-lbl">CO₂ Saved</span></div>
+    <div class="stat-item"><span class="stat-val" id="nav-bio">82%</span><span class="stat-lbl">Biodiversity</span></div>
+    <div style="display:flex;align-items:center;gap:.5rem"><div class="ws-status" id="ws-dot"></div><span style="font-size:.75rem;color:#6ee7b7" id="ws-label">Live</span></div>
+  </div>
+</nav>
+<section class="hero">
+  <h1>🌿 The Forest</h1>
+  <p>A living, breathing digital ecosystem. Every interaction plants a tree, every click breathes life into the canopy. The forest is alive — and it needs you.</p>
+  <button class="btn-plant" onclick="plantTree()">🌱 Plant a Tree</button>
+  <div class="season-row">
+    <button class="season-btn active" onclick="setSeason('spring',this)">🌸 Spring</button>
+    <button class="season-btn" onclick="setSeason('summer',this)">☀️ Summer</button>
+    <button class="season-btn" onclick="setSeason('autumn',this)">🍂 Autumn</button>
+    <button class="season-btn" onclick="setSeason('winter',this)">❄️ Winter</button>
+  </div>
+</section>
+<div class="section">
+  <div class="weather-bar">
+    <span id="weather-display">🌤️ Current weather: <strong id="weather-text">Clear</strong></span>
+    <button class="season-btn" onclick="fetchWeather()">🔄 Refresh Weather</button>
+  </div>
+  <div class="fact-box" onclick="fetchFact()" id="fact-box">
+    🌿 Click here to discover a forest fact...
+  </div>
+  <h2 class="section-title">Forest Inhabitants</h2>
+  <div class="species-grid" id="species-grid">
+    <div style="text-align:center;color:rgba(209,250,229,.5);padding:2rem;grid-column:1/-1">Loading species...</div>
+  </div>
+</div>
+<div class="section">
+  <h2 class="section-title">Ancient Trees</h2>
+  <div class="trees-grid" id="trees-grid">
+    <div style="text-align:center;color:rgba(209,250,229,.5);padding:2rem;grid-column:1/-1">Loading trees...</div>
+  </div>
+</div>
+<footer>
+  <p>🌿 The Forest — Living Ecosystem Platform</p>
+  <p style="margin-top:.5rem">Backend: Node.js + Express + WebSocket | Frontend: Vanilla HTML + Canvas P5.js-style</p>
+  <p style="margin-top:.5rem">API: <a href="http://localhost:3001/api/forest" style="color:var(--green)">localhost:3001</a></p>
+</footer>
+</main>
+<script>
+const API = "http://localhost:3001";
+let ws;
+
+// ---- Canvas Forest Background ----
+const canvas = document.getElementById("forest-bg");
+const ctx = canvas.getContext("2d");
+let trees=[], particles=[], season="spring", mouseX=0, mouseY=0;
+
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;initTrees()}
+function initTrees(){trees=[];const n=Math.floor(innerWidth/80);for(let i=0;i<n;i++){trees.push({x:Math.random()*innerWidth,h:80+Math.random()*120,w:8+Math.random()*8,sway:Math.random()*Math.PI*2,swaySpeed:0.005+Math.random()*0.01,color:["#166534","#15803d","#16a34a","#14532d"][Math.floor(Math.random()*4)],leaves:[]})}}
+function drawTree(t,tick){const sw=Math.sin(tick*t.swaySpeed+t.sway)*6;ctx.save();ctx.translate(t.x,innerHeight);ctx.rotate(sw*0.01);ctx.fillStyle="#3d1a00";ctx.fillRect(-t.w/2,0,t.w,-t.h);const lc=season==="winter"?"#c7d2fe":season==="autumn"?"#dc2626":season==="summer"?"#15803d":"#22c55e";ctx.fillStyle=lc;ctx.beginPath();ctx.arc(0,-t.h,t.w*3.5,0,Math.PI*2);ctx.fill();if(season==="spring"){for(let i=0;i<5;i++){ctx.fillStyle="rgba(236,72,153,.7)";ctx.beginPath();ctx.arc((Math.random()-.5)*t.w*6,(Math.random()-.5)*t.w*5-t.h,2,0,Math.PI*2);ctx.fill()}}ctx.restore()}
+function spawnParticle(){if(season==="autumn"&&Math.random()<0.1){particles.push({x:Math.random()*innerWidth,y:0,vx:(Math.random()-.5)*2,vy:1+Math.random()*2,alpha:1,color:["#dc2626","#f97316","#eab308","#a3e635"][Math.floor(Math.random()*4)],size:3+Math.random()*5})}if(season==="winter"&&Math.random()<0.15){particles.push({x:Math.random()*innerWidth,y:0,vx:(Math.random()-.5)*0.5,vy:0.5+Math.random(),alpha:.8,color:"#e0f2fe",size:2+Math.random()*3})}if(season==="spring"&&Math.random()<0.05){particles.push({x:Math.random()*innerWidth,y:innerHeight,vx:(Math.random()-.5)*1,vy:-0.5-Math.random(),alpha:1,color:"rgba(236,72,153,.8)",size:3+Math.random()*4})}}
+let tick=0;
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);const grad=ctx.createLinearGradient(0,0,0,canvas.height);if(season==="night"){grad.addColorStop(0,"#020617");grad.addColorStop(1,"#0a0a0a")}else if(season==="winter"){grad.addColorStop(0,"#0f172a");grad.addColorStop(1,"#1e293b")}else if(season==="autumn"){grad.addColorStop(0,"#1c0a00");grad.addColorStop(1,"#0a0a0a")}else{grad.addColorStop(0,"#022c22");grad.addColorStop(1,"#050f05")}ctx.fillStyle=grad;ctx.fillRect(0,0,canvas.width,canvas.height);trees.forEach(t=>drawTree(t,tick));spawnParticle();particles=particles.filter(p=>p.alpha>0);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.alpha-=0.008;ctx.globalAlpha=p.alpha;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1});tick++;requestAnimationFrame(animate)}
+window.addEventListener("resize",resize);window.addEventListener("mousemove",e=>{mouseX=e.clientX;mouseY=e.clientY});
+resize();animate();
+
+// ---- WebSocket ----
+function connectWS(){try{ws=new WebSocket("ws://localhost:3001");ws.onopen=()=>{document.getElementById("ws-dot").style.background="#22c55e";document.getElementById("ws-label").textContent="Live"};ws.onmessage=e=>{const d=JSON.parse(e.data);if(d.data){const s=d.data;if(s.trees){document.getElementById("nav-trees").textContent=s.trees;document.getElementById("nav-co2").textContent=s.co2Saved+"T";document.getElementById("nav-bio").textContent=s.biodiversityScore+"%"}}};ws.onclose=()=>{document.getElementById("ws-dot").style.background="#ef4444";document.getElementById("ws-label").textContent="Offline";setTimeout(connectWS,3000)}}catch(e){}}
+connectWS();
+
+// ---- API Calls ----
+async function api(path,method="GET",body){try{const r=await fetch(API+path,{method,headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});return await r.json()}catch{return null}}
+
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3500)}
+
+async function plantTree(){const r=await api("/api/donate","POST",{trees:1});if(r?.success){document.getElementById("nav-trees").textContent=r.newTotal;toast("🌱 "+r.message);if(trees.length<50){trees.push({x:Math.random()*innerWidth,h:60+Math.random()*80,w:6+Math.random()*6,sway:Math.random()*Math.PI*2,swaySpeed:0.005+Math.random()*0.01,color:"#22c55e",leaves:[]})}}}
+
+async function setSeason(s,btn){season=s;document.querySelectorAll(".season-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");await api("/api/season","POST",{season:s});toast("🌿 Season changed to "+s)}
+
+async function fetchFact(){const r=await api("/api/fact");if(r?.fact)document.getElementById("fact-box").textContent="💡 "+r.fact}
+
+async function fetchWeather(){const r=await api("/api/weather");if(r?.weather){document.getElementById("weather-text").textContent=r.weather.charAt(0).toUpperCase()+r.weather.slice(1);const icons={clear:"🌤️",misty:"🌫️",rainy:"🌧️",stormy:"⛈️",foggy:"🌁",snowy:"❄️"};document.getElementById("weather-display").innerHTML=(icons[r.weather]||"🌤️")+" Current weather: <strong>"+r.weather.charAt(0).toUpperCase()+r.weather.slice(1)+"</strong>"}}
+
+async function loadSpecies(){const r=await api("/api/species");if(!r?.data)return;const emojiMap={bird:"🐦",owl:"🦉",fox:"🦊",deer:"🦌",butterfly:"🦋",bear:"🐻",sparkle:"✨"};const grid=document.getElementById("species-grid");grid.innerHTML=r.data.map(s=>`<div class="species-card" onclick="toast('${s.name} spotted! 🎯')"><span class="species-emoji">${emojiMap[s.emoji]||"🌿"}</span><div class="species-name">${s.name}</div><div class="species-rarity rarity-${s.rarity}">${s.rarity}</div><div style="font-size:.8rem;color:rgba(209,250,229,.5);margin-top:.4rem">${s.type}</div></div>`).join("")}
+
+async function loadTrees(){const r=await api("/api/trees");if(!r?.data)return;const grid=document.getElementById("trees-grid");grid.innerHTML=r.data.map(t=>`<div class="tree-card"><div class="tree-name">🌳 ${t.name}</div><div class="tree-stat"><span>Age</span><span>${t.age} years</span></div><div class="tree-stat"><span>Height</span><span>${t.height}m</span></div><div class="tree-stat"><span>CO₂ Stored</span><span>${t.carbonStored}T</span></div></div>`).join("")}
+
+// Init
+loadSpecies();loadTrees();fetchFact();fetchWeather();
+</script>
+</body>
+</html>
