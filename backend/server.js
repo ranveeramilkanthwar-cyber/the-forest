@@ -68,3 +68,5 @@ setInterval(() => {
   wss.clients.forEach(c => c.readyState===1 && c.send(JSON.stringify({ type:"heartbeat", data:{ biodiversityScore:forestState.biodiversityScore }})));
 }, 10000);
 server.listen(3001, () => console.log("THE FOREST backend running on http://localhost:3001"));
+
+<!-- feat: add Express server with CORS -->
