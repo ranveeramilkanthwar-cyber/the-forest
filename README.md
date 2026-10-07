@@ -14,3 +14,5 @@ cd frontend && open index.html
 ```
 
 <!-- chore: project init and repo structure -->
+
+<!-- docs: add API endpoint documentation -->
