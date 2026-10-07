@@ -82,3 +82,5 @@ server.listen(3001, () => console.log("THE FOREST backend running on http://loca
 <!-- feat: add season and weather change APIs -->
 
 <!-- feat: broadcast biodiversity score via WS heartbeat -->
+
+<!-- perf: add auto biodiversity score increment -->
